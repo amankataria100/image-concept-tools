@@ -460,6 +460,43 @@
   }
   .copy-btn:hover { background: rgba(255,255,255,0.18); color: white; }
 
+  /* ── GEMINI BTN ── */
+  .gemini-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 8px;
+    padding: 8px 14px;
+    background: linear-gradient(135deg, #4285F4 0%, #0F9D58 50%, #F4B400 75%, #DB4437 100%);
+    background-size: 200% 200%;
+    animation: gemini-shimmer 4s ease infinite;
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+  }
+  .gemini-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+  .gemini-btn:active { transform: scale(0.97); }
+  .gemini-btn svg { flex-shrink: 0; }
+  @keyframes gemini-shimmer {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .prompt-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
   /* ── COMMENTARY ── */
   .commentary {
     border: 1px solid var(--gray-100);
@@ -898,6 +935,12 @@ RULES:
   }
 }
 
+function buildGeminiUrl(prompt) {
+  // Gemini supports pre-filling the chat input via the `q` query param
+  const encoded = encodeURIComponent(prompt);
+  return `https://gemini.google.com/app?q=${encoded}`;
+}
+
 function copyPrompt(btn, text) {
   navigator.clipboard.writeText(text).then(() => {
     btn.textContent = 'Copied!';
@@ -951,6 +994,16 @@ function renderOutput(data, brief) {
           <div class="prompt-box" id="${promptId}">
             ${prompt}
             <button class="copy-btn" onclick="copyPrompt(this, document.getElementById('${promptId}').innerText.replace('Copy','').trim())">Copy</button>
+          </div>
+          <div class="prompt-actions">
+            <a class="gemini-btn" href="${buildGeminiUrl(prompt)}" target="_blank" rel="noopener noreferrer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="white" opacity="0"/>
+                <path d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zm0 4.5c1.795 0 3.437.626 4.73 1.664L5.664 16.73A8.46 8.46 0 0 1 4 12c0-4.687 3.813-8.5 8.5-8.5H12zm0 17c-1.795 0-3.437-.626-4.73-1.664l11.066-11.066A8.46 8.46 0 0 1 20 12c0 4.687-3.813 8.5-8.5 8.5H12z" fill="white" opacity="0"/>
+                <path d="M12 3L4.5 20.5h3.2l1.7-4.5h5.2l1.7 4.5h3.2L12 3zm-1.5 10.5L12 7l1.5 6.5h-3z" fill="white"/>
+              </svg>
+              Generate with Gemini
+            </a>
           </div>
         </div>
       </div>

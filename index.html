@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Product Image Concept Workflow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --pink: #FC2779;
+    --pink-light: #FF8FB1;
+    --pink-pale: #FFF0F6;
+    --black: #0f0f0f;
+    --gray-900: #1a1a1a;
+    --gray-700: #3a3a3a;
+    --gray-500: #6b6b6b;
+    --gray-300: #c8c8c8;
+    --gray-100: #f4f4f4;
+    --gray-50: #fafafa;
+    --white: #ffffff;
+    --success: #16a34a;
+    --success-bg: #f0fdf4;
+    --warn-bg: #fffbeb;
+    --warn: #b45309;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-900);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── TOP NAV ── */
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-100);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--black);
+    text-decoration: none;
+  }
+  .nav-logo-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--pink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-logo-dot svg { width: 14px; height: 14px; fill: white; }
+  .nav-tag {
+    font-size: 12px;
+    color: var(--gray-500);
+    font-weight: 400;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2.5rem;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--pink-pale);
+    color: var(--pink);
+    border: 1px solid rgba(252,39,121,0.2);
+    border-radius: 100px;
+    padding: 4px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 600;
+    color: var(--black);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+  .hero p {
+    font-size: 16px;
+    color: var(--gray-500);
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* ── STEPS BANNER ── */
+  .steps-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    margin-bottom: 2.5rem;
+    overflow-x: auto;
+  }
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .step-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--gray-100);
+    color: var(--gray-500);
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .step-num.active { background: var(--pink); color: white; }
+  .step-num.done { background: var(--success); color: white; }
+  .step-label { font-size: 13px; color: var(--gray-500); font-weight: 400; }
+  .step-label.active { color: var(--gray-900); font-weight: 500; }
+  .step-arrow {
+    color: var(--gray-300);
+    font-size: 18px;
+    margin: 0 10px;
+  }
+  .step-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .badge-ai { background: #EFF6FF; color: #1D4ED8; }
+  .badge-human { background: var(--warn-bg); color: var(--warn); }
+
+  /* ── MAIN GRID ── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  @media (max-width: 700px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .hero { padding: 2rem 0.5rem 1.5rem; }
+    .steps-row { display: none; }
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .card-header {
+    padding: 1.25rem 1.5rem 0;
+    margin-bottom: 1.25rem;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 2px;
+  }
+  .card-sub {
+    font-size: 12px;
+    color: var(--gray-500);
+  }
+  .card-body { padding: 0 1.5rem 1.5rem; }
+  .card-divider { height: 1px; background: var(--gray-100); margin: 1rem 0; }
+
+  /* ── FORM ── */
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray-700);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  input[type="text"], textarea, select {
+    width: 100%;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    color: var(--gray-900);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  input[type="text"]:focus, textarea:focus, select:focus {
+    border-color: var(--pink);
+    box-shadow: 0 0 0 3px rgba(252,39,121,0.1);
+  }
+  textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
+  select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b6b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .color-field { display: flex; align-items: center; gap: 8px; }
+  .color-field input[type="color"] {
+    width: 36px; height: 36px; padding: 2px; border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-300); cursor: pointer; background: none; flex-shrink: 0;
+  }
+  .color-field input[type="text"] { flex: 1; }
+
+  .autofill-btn {
+    width: 100%;
+    padding: 9px 12px;
+    background: var(--pink-pale);
+    color: var(--pink);
+    border: 1px dashed rgba(252,39,121,0.3);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.15s;
+    margin-bottom: 14px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .autofill-btn:hover { background: rgba(252,39,121,0.08); }
+
+  /* ── SUBMIT BTN ── */
+  .submit-btn {
+    width: 100%;
+    padding: 12px 20px;
+    background: var(--pink);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .submit-btn:hover { background: #e01e6a; }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled { background: var(--gray-300); cursor: not-allowed; transform: none; }
+
+  /* ── OUTPUT PANEL ── */
+  .output-panel { min-height: 400px; }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+    color: var(--gray-500);
+    min-height: 400px;
+  }
+  .empty-icon {
+    width: 56px; height: 56px;
+    background: var(--gray-100);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  .empty-icon svg { width: 24px; height: 24px; stroke: var(--gray-300); fill: none; }
+  .empty-state h3 { font-size: 15px; font-weight: 500; color: var(--gray-700); margin-bottom: 6px; }
+  .empty-state p { font-size: 13px; line-height: 1.5; max-width: 260px; }
+
+  /* ── LOADING ── */
+  .loading-state { padding: 2rem 1.5rem; }
+  .loading-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 13px;
+    color: var(--gray-500);
+  }
+  .loading-step:last-child { border-bottom: none; }
+  .loading-step.done { color: var(--gray-900); }
+  .loading-step.active { color: var(--pink); font-weight: 500; }
+  .spin {
+    width: 16px; height: 16px; border: 2px solid var(--pink-pale);
+    border-top-color: var(--pink); border-radius: 50%;
+    animation: spin 0.8s linear infinite; flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .check-icon { width: 16px; height: 16px; flex-shrink: 0; color: var(--success); }
+  .dot-icon { width: 8px; height: 8px; background: var(--gray-200); border-radius: 50%; flex-shrink: 0; margin: 4px; }
+
+  /* ── CONCEPT CARDS ── */
+  .concepts-wrap { padding: 1.5rem; }
+  .brand-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--gray-100);
+    border-radius: 100px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--gray-700);
+    margin-bottom: 1.25rem;
+    font-weight: 500;
+  }
+  .concept-card {
+    border: 1px solid var(--gray-100);
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+    overflow: hidden;
+    transition: box-shadow 0.15s;
+  }
+  .concept-card:hover { box-shadow: var(--shadow-md); }
+  .concept-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .concept-dir {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--pink);
+    margin-bottom: 4px;
+  }
+  .concept-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--black);
+    line-height: 1.3;
+  }
+  .concept-num-badge {
+    width: 28px; height: 28px;
+    background: var(--gray-100);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; color: var(--gray-500);
+    flex-shrink: 0;
+  }
+  .concept-body { padding: 1rem 1.25rem; }
+  .concept-rationale {
+    font-size: 13px;
+    color: var(--gray-700);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    padding: 10px 14px;
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--pink-light);
+  }
+  .spec-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+  .spec-item {
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+  }
+  .spec-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gray-500);
+    margin-bottom: 3px;
+  }
+  .spec-value {
+    font-size: 12px;
+    color: var(--gray-900);
+    line-height: 1.4;
+  }
+  .copy-overlay-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--pink-pale);
+    border-radius: var(--radius-sm);
+    margin-bottom: 10px;
+  }
+  .copy-overlay-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--pink); white-space: nowrap; }
+  .copy-overlay-text { font-size: 13px; font-style: italic; color: var(--gray-900); }
+  .prompt-section { margin-top: 10px; }
+  .prompt-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-500); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .prompt-box {
+    background: var(--gray-900);
+    color: #e0e0e0;
+    font-family: 'DM Mono', monospace;
+    font-size: 11.5px;
+    line-height: 1.6;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    position: relative;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 8px; right: 8px;
+    padding: 4px 10px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+    color: #aaa;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.15s;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.18); color: white; }
+
+  /* ── COMMENTARY ── */
+  .commentary {
+    border: 1px solid var(--gray-100);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    background: var(--white);
+    margin-top: 1rem;
+  }
+  .commentary h3 { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: var(--black); }
+  .commentary-item { display: flex; gap: 10px; font-size: 13px; color: var(--gray-700); margin-bottom: 8px; line-height: 1.5; }
+  .commentary-item:last-child { margin-bottom: 0; }
+  .comm-dot { font-size: 16px; line-height: 1.2; flex-shrink: 0; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 12px;
+    color: var(--gray-300);
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-dot">
+      <svg viewBox="0 0 16 16"><path d="M8 1l2 4h4l-3 3 1 4-4-2-4 2 1-4-3-3h4z"/></svg>
+    </div>
+    Image Concept Workflow
+  </a>
+  <span class="nav-tag">Powered by Gemini · Free</span>
+</nav>
+
+<div class="container">
+
+  <div class="hero">
+    <div class="hero-badge">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
+      D2C Brand → 3 On-brand Image Concepts
+    </div>
+    <h1>Product Image Concept<br/>Generator</h1>
+    <p>Fill the brand brief. AI researches competitors, extracts visual patterns, and writes 3 strategically distinct image concept briefs — ready for any image-gen tool.</p>
+  </div>
+
+  <div class="steps-row">
+    <div class="step-item">
+      <div class="step-num active" id="sn1">1</div>
+      <span class="step-label active">Brand Brief</span>
+      <span class="step-badge badge-human">You</span>
+    </div>
+    <span class="step-arrow">›</span>
+    <div class="step-item">
+      <div class="step-num" id="sn2">2</div>
+      <span class="step-label" id="sl2">Competitor Analysis</span>
+      <span class="step-badge badge-ai">AI</span>
+    </div>
+    <span class="step-arrow">›</span>
+    <div class="step-item">
+      <div class="step-num" id="sn3">3</div>
+      <span class="step-label" id="sl3">Gap Mapping</span>
+      <span class="step-badge badge-ai">AI</span>
+    </div>
+    <span class="step-arrow">›</span>
+    <div class="step-item">
+      <div class="step-num" id="sn4">4</div>
+      <span class="step-label" id="sl4">3 Concept Briefs</span>
+      <span class="step-badge badge-ai">AI</span>
+    </div>
+  </div>
+
+  <div class="main-grid">
+
+    <!-- LEFT: FORM -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Brand Brief</div>
+        <div class="card-sub">Fill all fields for best results</div>
+      </div>
+      <div class="card-body">
+
+        <button class="autofill-btn" onclick="fillNykaa()">⚡ Auto-fill Nykaa example</button>
+
+        <div class="field">
+          <label>Product name</label>
+          <input type="text" id="f-product" placeholder="e.g. Nykaa Skinshield SPF 50 Sunscreen" />
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Category</label>
+            <input type="text" id="f-category" placeholder="e.g. Skincare" />
+          </div>
+          <div class="field">
+            <label>Platform</label>
+            <select id="f-platform">
+              <option>Amazon listing + website hero</option>
+              <option>Amazon listing only</option>
+              <option>Website hero + paid ads</option>
+              <option>All channels</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Key features (3–5)</label>
+          <textarea id="f-features" placeholder="SPF 50, PA++++&#10;Lightweight gel, no white cast&#10;50ml pump bottle"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Hero tagline</label>
+          <input type="text" id="f-tagline" placeholder="e.g. Invisible protection. All-day confidence." />
+        </div>
+
+        <div class="card-divider"></div>
+
+        <div class="field">
+          <label>Target audience</label>
+          <input type="text" id="f-audience" placeholder="e.g. Women 22–35, metro India" />
+        </div>
+
+        <div class="field">
+          <label>Key audience insight</label>
+          <input type="text" id="f-insight" placeholder="e.g. Wants sun protection that doesn't ruin makeup" />
+        </div>
+
+        <div class="card-divider"></div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Primary color</label>
+            <div class="color-field">
+              <input type="color" id="f-color1-pick" value="#FC2779" oninput="document.getElementById('f-color1').value=this.value" />
+              <input type="text" id="f-color1" placeholder="#FC2779" oninput="syncColor(this,'f-color1-pick')" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Secondary color</label>
+            <div class="color-field">
+              <input type="color" id="f-color2-pick" value="#FF8FB1" oninput="document.getElementById('f-color2').value=this.value" />
+              <input type="text" id="f-color2" placeholder="#FF8FB1" oninput="syncColor(this,'f-color2-pick')" />
+            </div>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Brand tone</label>
+            <select id="f-tone">
+              <option>Confident & empowering</option>
+              <option>Playful & youthful</option>
+              <option>Clinical & credible</option>
+              <option>Luxurious & aspirational</option>
+              <option>Natural & honest</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Visual style</label>
+            <select id="f-style">
+              <option>Bold / expressive</option>
+              <option>Clean / minimal</option>
+              <option>Lifestyle / editorial</option>
+              <option>Clinical / product-forward</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Feels like</label>
+          <input type="text" id="f-feels" placeholder="e.g. Glossier meets Indian glamour" />
+        </div>
+
+        <div class="field">
+          <label>Never feels like</label>
+          <input type="text" id="f-notfeel" placeholder="e.g. Pharmaceutical, clinical, dull" />
+        </div>
+
+        <div class="card-divider"></div>
+
+        <div class="field">
+          <label>Direct competitors (3–5 names)</label>
+          <input type="text" id="f-competitors" placeholder="e.g. Minimalist, Dot & Key, Neutrogena" />
+        </div>
+
+        <button class="submit-btn" id="gen-btn" onclick="generate()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 1v14M1 8h14"/></svg>
+          Generate 3 Image Concepts
+        </button>
+
+      </div>
+    </div>
+
+    <!-- RIGHT: OUTPUT -->
+    <div class="card output-panel" id="output-panel">
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        </div>
+        <h3>Ready to generate</h3>
+        <p>Fill the brand brief on the left, then click Generate to get 3 AI-written image concept briefs.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>Built for Walnut folks / Confluencr · Creative Process Engineer Assignment</footer>
+
+<script>
+function syncColor(input, pickId) {
+  if (/^#[0-9a-fA-F]{6}$/.test(input.value)) {
+    document.getElementById(pickId).value = input.value;
+  }
+}
+
+function fillNykaa() {
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
+  set('f-product', 'Nykaa Skinshield SPF 50 PA++++ Sunscreen Gel');
+  set('f-category', 'Skincare / Sun Protection');
+  set('f-features', 'SPF 50, PA++++\nLightweight gel formula, no white cast\nSuitable for oily & combination skin\n50ml airless pump\nFragrance-free, dermatologist tested');
+  set('f-tagline', 'Invisible protection. All-day confidence.');
+  set('f-audience', 'Women 22–35, metro India, beauty-aware');
+  set('f-insight', 'Wants strong sun protection that doesn\'t disrupt makeup or feel greasy');
+  set('f-color1', '#FC2779');
+  set('f-color1-pick', '#FC2779');
+  set('f-color2', '#FF8FB1');
+  set('f-color2-pick', '#FF8FB1');
+  set('f-tone', 'Confident & empowering');
+  set('f-style', 'Bold / expressive');
+  set('f-feels', 'Glossier meets Indian glamour — aspirational but accessible');
+  set('f-notfeel', 'Pharmaceutical, clinical, overcrowded with text, dull');
+  set('f-competitors', 'Minimalist, Dot & Key, Neutrogena, Lotus Herbals, Lakme Sun Expert');
+  set('f-platform', 'Amazon listing + website hero');
+}
+
+function getVal(id) { return (document.getElementById(id)?.value || '').trim(); }
+
+function showLoading() {
+  document.getElementById('output-panel').innerHTML = `
+    <div class="loading-state">
+      <div style="font-size:13px;font-weight:600;color:var(--black);margin-bottom:16px;">Generating your concepts…</div>
+      <div class="loading-step done" id="ls1">
+        <svg class="check-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 8l3.5 3.5L13 4.5"/></svg>
+        Brand brief received
+      </div>
+      <div class="loading-step active" id="ls2">
+        <div class="spin"></div>
+        Analyzing competitor visual patterns…
+      </div>
+      <div class="loading-step" id="ls3">
+        <div class="dot-icon"></div>
+        Mapping visual gaps
+      </div>
+      <div class="loading-step" id="ls4">
+        <div class="dot-icon"></div>
+        Writing 3 concept briefs
+      </div>
+    </div>`;
+}
+
+function advanceLoading(step) {
+  const checkSvg = `<svg class="check-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 8l3.5 3.5L13 4.5"/></svg>`;
+  if (step >= 3) {
+    const ls2 = document.getElementById('ls2');
+    if (ls2) { ls2.className = 'loading-step done'; ls2.innerHTML = checkSvg + ' Competitor patterns extracted'; }
+    const ls3 = document.getElementById('ls3');
+    if (ls3) { ls3.className = 'loading-step active'; ls3.innerHTML = '<div class="spin"></div> Mapping visual gaps…'; }
+  }
+  if (step >= 4) {
+    const ls3 = document.getElementById('ls3');
+    if (ls3) { ls3.className = 'loading-step done'; ls3.innerHTML = checkSvg + ' Visual gaps identified'; }
+    const ls4 = document.getElementById('ls4');
+    if (ls4) { ls4.className = 'loading-step active'; ls4.innerHTML = '<div class="spin"></div> Writing concept briefs…'; }
+  }
+}
+
+function updateSteps(active) {
+  [1,2,3,4].forEach(i => {
+    const el = document.getElementById('sn'+i);
+    if (!el) return;
+    if (i < active) { el.className = 'step-num done'; el.textContent = '✓'; }
+    else if (i === active) { el.className = 'step-num active'; el.textContent = i; }
+    else { el.className = 'step-num'; el.textContent = i; }
+  });
+}
+
+async function generate() {
+  const product = getVal('f-product');
+  if (!product) { alert('Please fill in the product name at minimum.'); return; }
+
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin" style="border-color:rgba(255,255,255,0.3);border-top-color:white;"></div> Generating…';
+
+  showLoading();
+  updateSteps(2);
+  document.getElementById('empty-state') && (document.getElementById('empty-state').style.display = 'none');
+
+  const data = {
+    product, 
+    category: getVal('f-category') || 'Consumer goods',
+    features: getVal('f-features'),
+    tagline: getVal('f-tagline'),
+    audience: getVal('f-audience'),
+    insight: getVal('f-insight'),
+    color1: getVal('f-color1') || '#000000',
+    color2: getVal('f-color2') || '#ffffff',
+    tone: getVal('f-tone'),
+    style: getVal('f-style'),
+    feels: getVal('f-feels'),
+    notfeel: getVal('f-notfeel'),
+    competitors: getVal('f-competitors'),
+    platform: getVal('f-platform'),
+  };
+
+  setTimeout(() => advanceLoading(3), 1200);
+  setTimeout(() => advanceLoading(4), 2400);
+
+  const prompt = `You are a creative strategist specializing in D2C e-commerce product imagery for Indian and global brands.
+
+BRAND BRIEF:
+- Product: ${data.product}
+- Category: ${data.category}
+- Key features: ${data.features}
+- Hero tagline: ${data.tagline}
+- Target audience: ${data.audience}
+- Audience insight: ${data.insight}
+- Primary brand color: ${data.color1}
+- Secondary brand color: ${data.color2}
+- Brand tone: ${data.tone}
+- Visual style: ${data.style}
+- Brand feels like: ${data.feels}
+- Brand NEVER feels like: ${data.notfeel}
+- Competitors: ${data.competitors}
+- Platform: ${data.platform}
+
+COMPETITOR VISUAL ANALYSIS (synthesized):
+Based on the competitors listed, research what typical visual patterns exist in this product category: dominant colors, image types (hero/lifestyle/detail), composition styles, text treatment, and emotional register. Identify what is overdone and what visual gap exists that this brand could own.
+
+YOUR TASK:
+Generate exactly 3 image concept briefs — each representing a different STRATEGIC DIRECTION:
+1. Premium / Hero Shot — product as luxury object
+2. Lifestyle / Emotive — emotional payoff and human context  
+3. Functional / Benefit-Proof — demonstrating the key product claim
+
+Respond ONLY with a raw JSON object (no markdown, no code fences, no explanation before or after). Use this exact structure:
+
+{
+  "competitor_gap": "2-3 sentence summary of what competitors do and what visual gap exists",
+  "concepts": [
+    {
+      "direction": "Premium / Hero Shot",
+      "title": "short evocative name for this concept",
+      "strategic_rationale": "2 sentences: why this angle works for this brand vs. competitors",
+      "subject": "specific description of the hero visual element",
+      "background": "specific background with color references from the brief",
+      "lighting": "lighting style and mood, specific not generic",
+      "props": "supporting elements or 'none'",
+      "composition": "how elements are arranged, spatial hierarchy",
+      "copy_overlay": "suggested text/tagline for the image",
+      "color_usage": "how primary and secondary colors from the brief are used",
+      "image_gen_prompt": "detailed 60-80 word prompt for Midjourney or DALL-E to generate this image. Be specific about: subject, background, lighting, mood, color, style, composition. No text in image."
+    },
+    {
+      "direction": "Lifestyle / Emotive",
+      "title": "...",
+      "strategic_rationale": "...",
+      "subject": "...",
+      "background": "...",
+      "lighting": "...",
+      "props": "...",
+      "composition": "...",
+      "copy_overlay": "...",
+      "color_usage": "...",
+      "image_gen_prompt": "..."
+    },
+    {
+      "direction": "Functional / Benefit-Proof",
+      "title": "...",
+      "strategic_rationale": "...",
+      "subject": "...",
+      "background": "...",
+      "lighting": "...",
+      "props": "...",
+      "composition": "...",
+      "copy_overlay": "...",
+      "color_usage": "...",
+      "image_gen_prompt": "..."
+    }
+  ]
+}
+
+RULES:
+- Only use colors, tone language, and visual references from the brief. Do not invent brand history.
+- Each concept must be strategically distinct, not just visually different.
+- Every spec field must be specific and executable. No vague words like "bright", "modern", "nice".
+- The image_gen_prompt must be usable directly in Midjourney or DALL-E without editing.`;
+
+  try {
+    const resp = await fetch('/api/groq', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+
+    const json = await resp.json();
+    
+    if (json.error) throw new Error(json.error);
+
+    const rawText = json.text || '';
+    let parsed;
+    try {
+      const clean = rawText.replace(/```json|```/g, '').trim();
+      const start = clean.indexOf('{');
+      const end = clean.lastIndexOf('}');
+      parsed = JSON.parse(clean.slice(start, end + 1));
+    } catch(e) {
+      throw new Error('Could not parse AI response. Raw: ' + rawText.slice(0, 200));
+    }
+
+    updateSteps(5);
+    renderOutput(parsed, data);
+
+  } catch(err) {
+    document.getElementById('output-panel').innerHTML = `
+      <div style="padding:2rem;">
+        <div style="background:#fff5f5;border:1px solid #fecaca;border-radius:8px;padding:1rem 1.25rem;">
+          <div style="font-size:14px;font-weight:600;color:#dc2626;margin-bottom:6px;">Generation failed</div>
+          <div style="font-size:13px;color:#7f1d1d;line-height:1.5;">${err.message}</div>
+          <div style="font-size:12px;color:#9ca3af;margin-top:8px;">Make sure GROQ_API_KEY is set in Netlify environment variables.</div>
+        </div>
+      </div>`;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 1v14M1 8h14"/></svg> Generate 3 Image Concepts`;
+  }
+}
+
+function copyPrompt(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+
+function renderOutput(data, brief) {
+  const dirColors = ['var(--pink)', '#7c3aed', '#0891b2'];
+  
+  let html = `<div class="concepts-wrap">
+    <div class="brand-pill">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor" style="color:var(--pink)"><circle cx="5" cy="5" r="5"/></svg>
+      ${brief.product}
+    </div>`;
+
+  if (data.competitor_gap) {
+    html += `<div style="font-size:13px;color:var(--gray-700);line-height:1.6;padding:12px 14px;background:var(--gray-50);border-radius:var(--radius-sm);border-left:3px solid var(--gray-300);margin-bottom:1.25rem;">
+      <strong style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--gray-500);display:block;margin-bottom:4px;">Competitor gap</strong>
+      ${data.competitor_gap}
+    </div>`;
+  }
+
+  (data.concepts || []).forEach((c, i) => {
+    const prompt = c.image_gen_prompt || '';
+    const promptId = 'prompt-' + i;
+    html += `
+    <div class="concept-card">
+      <div class="concept-header">
+        <div>
+          <div class="concept-dir" style="color:${dirColors[i]}">${c.direction}</div>
+          <div class="concept-title">${c.title || 'Untitled Concept'}</div>
+        </div>
+        <div class="concept-num-badge">${i+1}</div>
+      </div>
+      <div class="concept-body">
+        <div class="concept-rationale">${c.strategic_rationale || ''}</div>
+        <div class="spec-grid">
+          <div class="spec-item"><div class="spec-label">Subject</div><div class="spec-value">${c.subject||'—'}</div></div>
+          <div class="spec-item"><div class="spec-label">Background</div><div class="spec-value">${c.background||'—'}</div></div>
+          <div class="spec-item"><div class="spec-label">Lighting</div><div class="spec-value">${c.lighting||'—'}</div></div>
+          <div class="spec-item"><div class="spec-label">Composition</div><div class="spec-value">${c.composition||'—'}</div></div>
+          <div class="spec-item"><div class="spec-label">Props</div><div class="spec-value">${c.props||'None'}</div></div>
+          <div class="spec-item"><div class="spec-label">Color usage</div><div class="spec-value">${c.color_usage||'—'}</div></div>
+        </div>
+        ${c.copy_overlay ? `<div class="copy-overlay-row"><span class="copy-overlay-label">Copy overlay</span><span class="copy-overlay-text">"${c.copy_overlay}"</span></div>` : ''}
+        <div class="prompt-section">
+          <div class="prompt-label">Image-gen prompt
+            <span style="font-size:10px;background:var(--gray-100);padding:2px 6px;border-radius:4px;color:var(--gray-500);font-weight:400;text-transform:none;letter-spacing:0;">Midjourney · DALL-E · Firefly</span>
+          </div>
+          <div class="prompt-box" id="${promptId}">
+            ${prompt}
+            <button class="copy-btn" onclick="copyPrompt(this, document.getElementById('${promptId}').innerText.replace('Copy','').trim())">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  html += `<div class="commentary">
+    <h3>What worked · what didn't · what to iterate</h3>
+    <div class="commentary-item"><span class="comm-dot" style="color:var(--success)">+</span><span>The "never feels like" and hex color fields directly constrained AI output — generic or off-brand aesthetics were prevented before generation, not caught after.</span></div>
+    <div class="commentary-item"><span class="comm-dot" style="color:var(--success)">+</span><span>3 concepts make three different customer arguments (aspiration, emotion, proof) — not just visual variations of the same idea.</span></div>
+    <div class="commentary-item"><span class="comm-dot" style="color:#dc2626">−</span><span>Competitor research is synthesized from training data, not a live web scrape. Production version should pull real Amazon listing images for sharper gap analysis.</span></div>
+    <div class="commentary-item"><span class="comm-dot" style="color:#d97706">→</span><span>Next iteration: add a visual reference upload field so brands can anchor output to specific inspiration images rather than text descriptions alone.</span></div>
+  </div>
+  </div>`;
+
+  document.getElementById('output-panel').innerHTML = html;
+}
+</script>
+</body>
+</html>
